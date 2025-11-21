@@ -26,46 +26,60 @@ RegisterNumber: 212224230008
 ```
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.tree import DecisionTreeClassifier, plot_tree
-data = pd.read_csv("Salary_EX7.csv")
+data = pd.read_csv("Mall_Customers.csv")
+```
+```
 data.head()
 data.info()
-data.isnull().sum()
-from sklearn.preprocessing import LabelEncoder
-le = LabelEncoder()
-data["Position"] = le.fit_transform(data["Position"])
-data.head()
-x=data[["Position","Level"]]
-y=data["Salary"]
-from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2,random_state=2)
-from sklearn.tree import DecisionTreeRegressor,plot_tree
-dt=DecisionTreeRegressor()
-dt.fit(x_train,y_train)
-y_pred=dt.predict(x_test)
-from sklearn import metrics
-mse = metrics.mean_squared_error(y_test,y_pred)
-mse
-r2=metrics.r2_score(y_test,y_pred)
-r2
-dt.predict(pd.DataFrame([[5,6]], columns=x.columns))
-plt.figure(figsize=(20, 8))
-plot_tree(dt, feature_names=list(x.columns), filled=True)
-plt.show()
 ```
+```
+data.isnull().sum()
+```
+```
+from sklearn.cluster import KMeans
+wcss = []
+for i in range(1,11):
+    kmeans = KMeans(n_clusters = i,init = "k-means++",n_init=10)
+    kmeans.fit(data.iloc[:,3:])
+    wcss.append(kmeans.inertia_)
+```
+```
+plt.plot(range(1,11),wcss)
+plt.xlabel("No. of Clusters")
+plt.ylabel("wcss")
+plt.title("Elbow Method")
+```
+```
+km = KMeans(n_clusters=5, n_init=10)
+km.fit(data.iloc[:, 3:])
+y_pred = km.predict(data.iloc[:,3:])
+y_pred
+```
+```
+data["cluster"] = y_pred
+df0 = data[data["cluster"]==0]
+df1 = data[data["cluster"]==1]
+df2 = data[data["cluster"]==2]
+df3 = data[data["cluster"]==3]
+df4 = data[data["cluster"]==4]
+```
+```
+plt.scatter(df0["Annual Income (k$)"],df0["Spending Score (1-100)"],c="red",label="cluster1")
+plt.scatter(df1["Annual Income (k$)"],df1["Spending Score (1-100)"],c="black",label="cluster2")
+plt.scatter(df2["Annual Income (k$)"],df2["Spending Score (1-100)"],c="blue",label="cluster3")
+plt.scatter(df3["Annual Income (k$)"],df3["Spending Score (1-100)"],c="green",label="cluster4")
+plt.scatter(df4["Annual Income (k$)"],df4["Spending Score (1-100)"],c="magenta",label="cluster5")
+plt.legend()
+plt.title("Customer Segments")
+```
+
 ## Output:
 
-## Data Head :
-<img width="425" height="292" alt="image" src="https://github.com/user-attachments/assets/0fb15f6e-5b4d-444b-8e9b-d9cf3d900e9f" />
+<img width="585" height="265" alt="image" src="https://github.com/user-attachments/assets/cde4443d-94a6-4729-9300-cc294670dc51" />
+<img width="357" height="292" alt="image" src="https://github.com/user-attachments/assets/bb891fa0-ef21-4fc9-b5cc-6515129ded58" />
+<img width="854" height="594" alt="image" src="https://github.com/user-attachments/assets/546aab34-0374-4116-b5d8-d51ee8b2a0ae" />
+<img width="861" height="228" alt="image" src="https://github.com/user-attachments/assets/318c8642-6a6c-47b4-baec-b3c01b0ef701" />
 
-## Data Info :
-<img width="413" height="259" alt="image" src="https://github.com/user-attachments/assets/46288728-82cb-4838-b41b-2fb86c4aac9e" />
-
-## Data Details :
-<img width="525" height="632" alt="image" src="https://github.com/user-attachments/assets/eec7ef0b-1f19-4e68-b5a6-84ef9d60464a" />
-
-## Data Predcition :
-<img width="1218" height="447" alt="image" src="https://github.com/user-attachments/assets/76835aa5-73c5-45aa-b674-f8c41187ea01" />
 
 ## Result:
 Thus the program to implement the K Means Clustering for Customer Segmentation is written and verified using python programming.
